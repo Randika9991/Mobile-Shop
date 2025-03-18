@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import NavLink from "../../components/NavLink";
-import {Logo} from "../../components/Logo";
+import { Logo } from "../../components/Logo";
 
 const Dropdown = ({ children }) => {
     const [open, setOpen] = useState(false);
@@ -37,41 +37,45 @@ const Dropdown = ({ children }) => {
     );
 };
 
-const UserNavbar = () => {
+const AdminNavbar = () => {
     return (
-        <header className="bg-white shadow-md">
-            <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8">
-                <div className="flex items-center space-x-3">
-                    <Logo to="/user/dashboard" name="Mobile Shop"/>
-                </div>
+        <div>
+            {/* Fixed Navbar */}
+            <header className="bg-white shadow-md fixed top-0 left-0 w-full z-10">
+                <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8">
+                    <div className="flex items-center space-x-3">
+                        <Logo to="/user/dashboard" name="Mobile Shop"/>
+                    </div>
 
-                {/* Navbar Links */}
-                <div className="hidden lg:flex lg:gap-x-10">
-                    <NavLink to="/admin/features" >Features</NavLink>
-                    <NavLink to="/admin/contact" >Contact</NavLink>
-                    <NavLink to="/admin/company" >Company</NavLink>
-                </div>
+                    {/* Center Content: Navigation Links */}
+                    <div className="flex flex-1 justify-end items-center gap-x-10">
+                        <NavLink to="/user/item/index">Product</NavLink>
+                        <NavLink to="/contact">Contact</NavLink>
+                        <NavLink to="/company">Company</NavLink>
 
-                {/* Admin Dropdown */}
-                <div className="relative">
-                    <Dropdown>
-                        <Link to="/user/edit/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                            User Profile
-                        </Link>
-                        <button
-                            onClick={() => {
-                                localStorage.clear();
-                                window.location.href = "/";
-                            }}
-                            className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                        >
-                            Log Out
-                        </button>
-                    </Dropdown>
-                </div>
-            </nav>
-        </header>
+                        <Dropdown>
+                            <Link to="/user/edit/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                Profile
+                            </Link>
+                            <button
+                                onClick={() => {
+                                    localStorage.clear();
+                                    window.location.href = "/";
+                                }}
+                                className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                            >
+                                Log Out
+                            </button>
+                        </Dropdown>
+                    </div>
+                </nav>
+            </header>
+
+            {/* Scrollable Content */}
+            <div className="pt-20 bg-gray-100 min-h">
+            </div>
+        </div>
     );
 };
 
-export default UserNavbar;
+export default AdminNavbar;

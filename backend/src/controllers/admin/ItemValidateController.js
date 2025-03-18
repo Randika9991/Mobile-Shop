@@ -15,7 +15,7 @@ exports.validateItem = [
     body('rearCamera').optional().isNumeric(),
     body('displaySize').optional().isNumeric(),
     body('warrenty').optional().isNumeric(),
-    body('modelName').optional().isString(),
+    body('modelName').notEmpty().withMessage('Model Number is required'),
     body('modelNumber').optional().isString(),
     body('qty').optional().isNumeric()
 ];

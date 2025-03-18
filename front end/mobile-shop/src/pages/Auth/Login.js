@@ -44,7 +44,6 @@ const LoginPage = () => {
     return (
 
         <div className="flex h-screen items-center justify-center bg-gray-100">
-
             <div className="w-full max-w-sm p-8 space-y-4 bg-white rounded-lg shadow-lg">
                 <h2 className="text-2xl font-bold text-indigo-600 flex items-center justify-center space-x-2">
                     <Logo />

@@ -13,7 +13,6 @@ exports.registerUser = async (req, res) => {
             return res.status(400).json({ error: 'User already exists. Please log in.' });
         }
 
-        // Hash password and create new user
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = new User({ name, email, password: hashedPassword, role });
         await newUser.save();
@@ -73,7 +72,7 @@ exports.getDashboard = (req, res) => {
 
 exports.userFindById = async (req, res) => {
     try {
-        const { id } = req.params; // Get user ID from request parameters
+        const { id } = req.params;
         if (!id) {
             return res.status(400).json({ error: "User ID is required" });
         }
@@ -104,12 +103,10 @@ exports.editProfile = async (req, res) => {
         if (name) user.name = name;
         if (email) user.email = email;
 
-        // If password is provided, hash it before updating
         if (password) {
             user.password = await bcrypt.hash(password, 10);
         }
 
-        // Save updated user
         await user.save();
 
         res.json({ message: "Profile updated successfully", user });

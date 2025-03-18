@@ -9,6 +9,7 @@ const connectDB = require('./src/config/db');
 // Import task routes
 const adminRoutes = require('./src/routes/adminRoutes');
 const adminUserRoutes = require('./src/routes/adminUserRoutes');
+const userRoutes = require('./src/routes/userRoutes');
 
 // Initialize Express app
 const app = express();
@@ -28,6 +29,8 @@ app.use(
 app.use(express.json());
 app.use('/api', adminRoutes); // Use task routes for '/api' path
 app.use('/api', adminUserRoutes); // Use task routes for '/api' path
+app.use('/api', userRoutes); // Use task routes for '/api' path
+
 
 //connect db
 connectDB();

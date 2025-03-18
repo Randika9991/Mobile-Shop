@@ -6,24 +6,15 @@ const WelcomeNavBar = () => {
     const isLoggedIn = localStorage.getItem("authToken"); // Check if user is logged in
     const role = localStorage.getItem("userRole");
     return (
-        <header className="bg-white shadow">
+        <header className="bg-white shadow-md fixed top-0 left-0 w-full z-10">
             <nav aria-label="Global" className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8">
                 {/* Logo */}
                 <div className="flex items-center space-x-3">
                     <Logo to="/"/>
                 </div>
 
-                {/* Desktop Menu */}
                 <div className="hidden lg:flex lg:gap-x-12">
-                    <a href="#" className="text-sm font-semibold text-gray-900">
-                        Home
-                    </a>
-                    <a href="#" className="text-sm font-semibold text-gray-900">
-                        Contact
-                    </a>
-                    <a href="#" className="text-sm font-semibold text-gray-900">
-                        About
-                    </a>
+
                 </div>
 
                 {/* Conditional Login/Logout and Dashboard */}

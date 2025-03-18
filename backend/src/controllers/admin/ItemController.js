@@ -1,9 +1,11 @@
 const Item = require('../../models/Item');
 const {validationResult} = require('express-validator');
+const moment = require("moment");
 
 exports.addItem = async (req, res) => {
     try {
         const errors = validationResult(req);
+
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
@@ -15,9 +17,17 @@ exports.addItem = async (req, res) => {
             rom: req.body.rom
         });
         if (existingItem) {
-            return res.status(400).json({ message: "This mobile configuration is already added." });
+            return res.status(400).json({ errors: "This mobile configuration is already added." });
         }
-        const newItem = new Item(req.body);
+        let formattedDate = "";
+        if (req.body.date) {
+            formattedDate = moment(req.body.date, "DD-MM-YYYY").format("YYYY-MM-DD");
+        }
+        const newItem = new Item({
+            ...req.body,
+            date: formattedDate,
+        });
+
         const savedItem = await newItem.save();
         res.status(201).json(savedItem);
     } catch (error) {

@@ -3,10 +3,12 @@ import AdminNavbar from "../../layout/admin/AdminNavbar";
 
 const AdminDashboard = () => {
     return (
-        <div>
+        <div className="bg-gray-100 h-screen overflow-hidden flex flex-col">
             <AdminNavbar />
-            <div className="flex h-screen items-center justify-center bg-gray-100">
-                <h1 className="text-4xl font-bold text-indigo-600">Welcome  admin dashboard!</h1>
+            <div className="flex-1 overflow-auto">
+                <div className="flex items-center justify-center max-w-5xl mx-auto min-h-full">
+                    <h1 className="text-4xl font-bold text-indigo-600">Welcome to the Admin Dashboard!</h1>
+                </div>
             </div>
         </div>
     );

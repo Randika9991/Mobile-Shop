@@ -20,7 +20,6 @@ exports.authMiddleware = (req, res, next) => {
                 return res.status(403).json({ message: 'Invalid token' });
             }
 
-            console.log('Decoded Token:', decoded);
             req.user = decoded;
             next();
         });
@@ -49,3 +48,13 @@ exports.adminMiddleware = (req, res, next) => {
         return res.status(403).json({message: 'Access denied'});
     }
 };
+
+//user part
+exports.userMiddleware = (req, res, next) => {
+    if (req.user.role === 'user') {
+        next();
+    } else {
+        return res.status(403).json({message: 'Access denied'});
+    }
+};
+
