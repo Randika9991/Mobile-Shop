@@ -3,76 +3,55 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import Footer from "../../../layout/Footer";
 import UserNavBar from "../../../layout/user/UserNavBar";
+import {showConfirmationAlert, showErrorAlert, showSuccessAlert} from "../../../utils/swalAlerts";
 
-const ItemIndex = () => {
+const FavoriteIndex = () => {
     const [products, setProducts] = useState([]);
-    const [favorites, setFavorites] = useState([]); // Track favorite products
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 3; // Items per page
+    const itemsPerPage = 3;
     const token = localStorage.getItem("authToken");
     const authId = localStorage.getItem("authId");
 
-    // Fetch all products
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                if (token) {
-                    const response = await axios.get("http://localhost:3000/api/getAllItemsUser", {
-                        headers: { Authorization: `Bearer ${token}` },
-                    });
-                    setProducts(response.data);
-                }
-            } catch (error) {
-                console.error("Error fetching items:", error);
+    const fetchProducts = async () => {
+        try {
+            if (token && authId) {
+                const favoriteResponse = await axios.get(`http://localhost:3000/api/getAllFavoriteOnly/${authId}`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                console.log(favoriteResponse);
+                setProducts(favoriteResponse.data);
             }
-        };
+        } catch (error) {
+            console.error("Error fetching items:", error);
+        }
+    };
 
+    useEffect(() => {
         fetchProducts();
-    }, [token]);
+    }, [token, authId]);
 
-    // Fetch user's favorite items
-    useEffect(() => {
-        const fetchFavorites = async () => {
-            try {
-                if (token) {
-                    const response = await axios.get(`http://localhost:3000/api/getAllUserFavorite/${authId}`, {
-                        headers: { Authorization: `Bearer ${token}` },
-                    });
-                    setFavorites(response.data.map((fav) => fav.itemId));
-                }
-            } catch (error) {
-                console.error("Error fetching favorites:", error);
-            }
-        };
-        fetchFavorites();
-    }, [token]);
-
-    const toggleFavorite = async (productId) => {
+    const removeFavorite = async (productId) => {
         if (!token) {
             console.error("No token found");
             return;
         }
 
         try {
-            if (favorites.includes(productId)) {
-                console.log(productId)
-                await axios.delete(`http://localhost:3000/api/DeleteFavoriteFindProductId/${productId}`, {
-                    data: { authId }, // Send authId in the request body
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+            await showConfirmationAlert("Are you sure you want to remove this item from your favorites?", async () => {
+                try {
+                    await axios.delete(`http://localhost:3000/api/DeleteFavoriteFindProductId/${productId}`, {
+                        data: { authId },
+                        headers: { Authorization: `Bearer ${token}` },
+                    });
 
-                setFavorites((prevFavorites) => prevFavorites.filter((id) => id !== productId));
-            } else {
-                await axios.post(
-                    "http://localhost:3000/api/addFavorite",
-                    { itemId: productId, authId: authId },
-                    { headers: { Authorization: `Bearer ${token}` } }
-                );
-
-                setFavorites((prevFavorites) => [...prevFavorites, productId]);
-            }
+                    await fetchProducts();
+                } catch (error) {
+                    console.error("Error deleting item:", error);
+                    showErrorAlert("Error deleting item:", error);
+                }
+            });
         } catch (error) {
-            console.error("Error toggling favorite:", error);
+            console.error("Error removing favorite:", error);
         }
     };
 
@@ -83,15 +62,20 @@ const ItemIndex = () => {
     return (
         <div className="bg-gray-100 min-h-screen flex flex-col">
             <UserNavBar />
-            <div className="p-6">
-                <h1 className="text-2xl font-bold mb-4">Available Products</h1>
 
-                {/* Cards Container */}
+            <div className="p-6">
+                <h1 className="text-2xl font-bold mb-4">Your Favorite Products</h1>
+
+                {products.length === 0 ? (
+                    <div className="text-center text-gray-500">
+                        <p>No favorite products found.</p>
+                    </div>
+                ) : (
                 <div className="flex justify-center">
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12">
                         {currentItems.map((product) => (
-                            <Link to={`/user/product/show/${product._id}`} className="block">
-                                <div key={product._id} className="w-full sm:w-60 md:w-150 lg:w-80">
+                            <Link to={`/product/show/${product._id}`} className="block">
+                                <div key={product._id} className="w-full sm:w-60 md:w-150 lg:w-80 cursor-pointer">
                                     <img
                                         src={product.imageUrl || "https://via.placeholder.com/300"}
                                         alt={product.name}
@@ -105,14 +89,13 @@ const ItemIndex = () => {
                                             <p className="text-gray-500 text-sm">{new Date(product.createdAt).toLocaleDateString()}</p>
                                             <button
                                                 onClick={(e) => {
-                                                    e.preventDefault(); // Prevent navigation
-                                                    toggleFavorite(product._id);
+                                                    e.preventDefault(); // Prevent navigation when clicking the remove button
+                                                    removeFavorite(product._id);
                                                 }}
-                                                className={`text-xl ${favorites.includes(product._id) ? 'text-red-600' : 'text-gray-500'}`}
+                                                className="text-xl text-red-600"
                                             >
-                                                <i className={`fas fa-heart ${favorites.includes(product._id) ? 'text-red-600' : 'text-gray-500'}`} />
+                                                <i className="fas fa-heart text-red-600" />
                                             </button>
-
                                         </div>
                                     </div>
                                 </div>
@@ -120,8 +103,7 @@ const ItemIndex = () => {
                         ))}
                     </div>
                 </div>
-
-                {/* Pagination Buttons */}
+                )}
                 <div className="flex justify-center mt-6 space-x-4">
                     <button
                         onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
@@ -139,9 +121,10 @@ const ItemIndex = () => {
                     </button>
                 </div>
             </div>
+
             <Footer />
         </div>
     );
 };
 
-export default ItemIndex;
+export default FavoriteIndex;

@@ -50,7 +50,7 @@ const AdminNavbar = () => {
                     {/* Center Content: Navigation Links */}
                     <div className="flex flex-1 justify-end items-center gap-x-10">
                         <NavLink to="/user/item/index">Product</NavLink>
-                        <NavLink to="/contact">Contact</NavLink>
+                        <NavLink to="/user/favorite">Favorite</NavLink>
                         <NavLink to="/company">Company</NavLink>
 
                         <Dropdown>

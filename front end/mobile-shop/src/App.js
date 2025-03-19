@@ -17,6 +17,8 @@ import UpdateItem from "./pages/admin/Item/UpdateItem";
 import User from "./pages/admin/User/User";
 
 import 'font-awesome/css/font-awesome.min.css';
+import Favorite from "./pages/user/Favorite/Favorite";
+import ShowItem from "./pages/user/Item/ShowItem";
 
 function App() {
     useAuthToken();
@@ -44,7 +46,8 @@ function App() {
                   <Route path="/user/edit/profile" id element={<UserProfileEdit />} />
 
                   <Route path="/user/item/index" element={<ItemUser />} />
-
+                  <Route path="/user/favorite" element={<Favorite />} />
+                  <Route path="/user/product/show/:id" element={<ShowItem />} />
               </Route>
 
               <Route path="*" element={<NotFound />} />

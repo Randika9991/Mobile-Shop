@@ -1,9 +1,12 @@
 const Favorite = require("../../models/Favorite");
+const Item = require("../../models/Item");
 
 exports.addFavorite = async (req, res) => {
     try {
         const { itemId } = req.body;
         const userId = req.user.id;
+
+        console.log("Authenticated User ID:", req.user.id);
 
         if (!userId || !itemId) {
             return res.status(400).json({ message: "User ID and Item ID are required" });
@@ -27,13 +30,33 @@ exports.addFavorite = async (req, res) => {
 exports.getAllFavorite = async (req, res) => {
     try {
         const { authId } = req.params;
-        const favorites = await Favorite.find({ authId });
+
+        console.log(authId);
+
+        const favorites = await Favorite.find({ userId:authId });
 
         if (!favorites.length) {
             return res.status(404).json({ message: "No favorites found for this user" });
         }
 
         res.status(200).json(favorites);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+exports.getAllFavoriteProductOnly = async (req, res) => {
+    try {
+        const { authId } = req.params;
+        const favorites = await Favorite.find({ userId:authId });
+
+        console.log(favorites)
+
+        const itemIds = favorites.map(fav => fav.itemId);
+
+        const items = await Item.find({ _id: { $in: itemIds } });
+
+        res.status(200).json(items);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
