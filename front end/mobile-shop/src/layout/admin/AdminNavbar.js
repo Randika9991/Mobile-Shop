@@ -51,9 +51,7 @@ const AdminNavbar = () => {
                     <div className="flex flex-1 justify-end items-center gap-x-10">
                         <NavLink to="/item/index">Product</NavLink>
                         <NavLink to="/users">User</NavLink>
-                        <NavLink to="/contact">Contact</NavLink>
-                        <NavLink to="/company">Company</NavLink>
-
+                        <NavLink to="/admin/orders">Orders</NavLink>
                         <Dropdown>
                             <Link to="/admin/edit/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                 Profile

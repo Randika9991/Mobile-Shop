@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import Footer from "../../../layout/Footer";
 import UserNavBar from "../../../layout/user/UserNavBar";
+import AddToCardShow from "../addToCard/AddToCardShow";
+import {FaShoppingCart} from "react-icons/fa";
 
 const ItemIndex = () => {
     const [products, setProducts] = useState([]);
@@ -87,32 +89,32 @@ const ItemIndex = () => {
                 <h1 className="text-2xl font-bold mb-4">Available Products</h1>
 
                 {/* Cards Container */}
-                <div className="flex justify-center">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12">
+                <div className="flex justify-center bg-white bg-white rounded-lg shadow-lg p-6 flex flex-col md:flex-row gap-6 flex items-center">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-24 justify-center items-center">
                         {currentItems.map((product) => (
                             <Link to={`/user/product/show/${product._id}`} className="block">
-                                <div key={product._id} className="w-full sm:w-60 md:w-150 lg:w-80">
+                                <div key={product._id} className="w-full rounded-lg shadow-inner sm:w-60 md:w-72 lg:w-80 bg-gray-100 rounded-lg  flex flex-col justify-between items-center">
                                     <img
                                         src={product.imageUrl || "https://via.placeholder.com/300"}
                                         alt={product.name}
-                                        className="w-full sm:w-60 md:w-150 h-60 object-cover"
+                                        className="w-3/4 h-60 object-cover"
                                     />
-                                    <div className="p-4">
+                                    <div className="p-4 text-center">
                                         <h2 className="text-lg font-semibold">{product.name}</h2>
                                         <p className="text-gray-600">{product.modelNumber}</p>
                                         <p className="text-gray-500">{product.color} - {product.rom} GB ROM / {product.ram} GB RAM</p>
-                                        <div className="mt-4 flex justify-between items-center">
+                                        <div className="mt-4 flex justify-between items-center w-full">
                                             <p className="text-gray-500 text-sm">{new Date(product.createdAt).toLocaleDateString()}</p>
                                             <button
                                                 onClick={(e) => {
-                                                    e.preventDefault(); // Prevent navigation
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
                                                     toggleFavorite(product._id);
                                                 }}
                                                 className={`text-xl ${favorites.includes(product._id) ? 'text-red-600' : 'text-gray-500'}`}
                                             >
                                                 <i className={`fas fa-heart ${favorites.includes(product._id) ? 'text-red-600' : 'text-gray-500'}`} />
                                             </button>
-
                                         </div>
                                     </div>
                                 </div>

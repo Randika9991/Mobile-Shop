@@ -18,7 +18,6 @@ const FavoriteIndex = () => {
                 const favoriteResponse = await axios.get(`http://localhost:3000/api/getAllFavoriteOnly/${authId}`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
-                console.log(favoriteResponse);
                 setProducts(favoriteResponse.data);
             }
         } catch (error) {
@@ -74,7 +73,7 @@ const FavoriteIndex = () => {
                 <div className="flex justify-center">
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12">
                         {currentItems.map((product) => (
-                            <Link to={`/product/show/${product._id}`} className="block">
+                            <Link to={`/user/product/show/${product._id}`} className="block">
                                 <div key={product._id} className="w-full sm:w-60 md:w-150 lg:w-80 cursor-pointer">
                                     <img
                                         src={product.imageUrl || "https://via.placeholder.com/300"}

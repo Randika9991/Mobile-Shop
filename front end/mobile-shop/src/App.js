@@ -15,10 +15,13 @@ import ItemUser from "./pages/user/Item/Item";
 import AddItem from "./pages/admin/Item/AddItem";
 import UpdateItem from "./pages/admin/Item/UpdateItem";
 import User from "./pages/admin/User/User";
+import OrderAdmin from "./pages/admin/order/OrderAdmin";
+
 
 import 'font-awesome/css/font-awesome.min.css';
 import Favorite from "./pages/user/Favorite/Favorite";
 import ShowItem from "./pages/user/Item/ShowItem";
+import AddToCardShow from "./pages/user/addToCard/AddToCardShow";
 
 function App() {
     useAuthToken();
@@ -38,6 +41,7 @@ function App() {
                   <Route path="/item/add" element={<AddItem />} />
                   <Route path="/item/update/:id" element={<UpdateItem />} />
                   <Route path="/users" element={<User />} />
+                  <Route path="/admin/orders" element={<OrderAdmin />} />
               </Route>
 
               {/*User*/}
@@ -48,6 +52,8 @@ function App() {
                   <Route path="/user/item/index" element={<ItemUser />} />
                   <Route path="/user/favorite" element={<Favorite />} />
                   <Route path="/user/product/show/:id" element={<ShowItem />} />
+
+                  <Route path="/addToCard" element={<AddToCardShow />} />
               </Route>
 
               <Route path="*" element={<NotFound />} />

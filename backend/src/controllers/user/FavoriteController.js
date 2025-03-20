@@ -6,8 +6,6 @@ exports.addFavorite = async (req, res) => {
         const { itemId } = req.body;
         const userId = req.user.id;
 
-        console.log("Authenticated User ID:", req.user.id);
-
         if (!userId || !itemId) {
             return res.status(400).json({ message: "User ID and Item ID are required" });
         }
@@ -31,8 +29,6 @@ exports.getAllFavorite = async (req, res) => {
     try {
         const { authId } = req.params;
 
-        console.log(authId);
-
         const favorites = await Favorite.find({ userId:authId });
 
         if (!favorites.length) {
@@ -50,13 +46,24 @@ exports.getAllFavoriteProductOnly = async (req, res) => {
         const { authId } = req.params;
         const favorites = await Favorite.find({ userId:authId });
 
-        console.log(favorites)
-
         const itemIds = favorites.map(fav => fav.itemId);
 
         const items = await Item.find({ _id: { $in: itemIds } });
 
         res.status(200).json(items);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+exports.getFavoriteItemFindId = async (req, res) => {
+    try {
+        const { authId } = req.params;
+        const {productId}  = req.query;
+
+        const result = await Favorite.findOne({ userId:authId, itemId: productId });
+
+        res.status(200).json(!!result);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -85,4 +92,6 @@ exports.removeFavorite = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+
 

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import NavLink from "../../components/NavLink";
 import { Logo } from "../../components/Logo";
+import {FaShoppingCart} from "react-icons/fa";
 
 const Dropdown = ({ children }) => {
     const [open, setOpen] = useState(false);
@@ -51,7 +52,9 @@ const AdminNavbar = () => {
                     <div className="flex flex-1 justify-end items-center gap-x-10">
                         <NavLink to="/user/item/index">Product</NavLink>
                         <NavLink to="/user/favorite">Favorite</NavLink>
-                        <NavLink to="/company">Company</NavLink>
+                        <NavLink to="/addToCard">
+                            <FaShoppingCart className="mr-2" size={22} />
+                        </NavLink>
 
                         <Dropdown>
                             <Link to="/user/edit/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">

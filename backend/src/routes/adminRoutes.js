@@ -4,6 +4,7 @@ const { authMiddleware, adminMiddleware } = require('../middleware/authMiddlewar
 const ItemController = require('../controllers/admin/ItemController');
 const ItemValidateController = require('../controllers/admin/ItemValidateController');
 const UserController = require('../controllers/admin/UserController');
+const AdminOrder = require('../controllers/admin/AdminOrder');
 
 
 //Product
@@ -17,5 +18,9 @@ router.get('/getAllItemsSearchInName', authMiddleware, adminMiddleware, ItemCont
 
 //users
 router.get('/getAllUsers', authMiddleware, adminMiddleware, UserController.getAllUsers);
+
+//order
+router.get('/admin/orders', authMiddleware, adminMiddleware, AdminOrder.getAllOrders);
+
 
 module.exports = router;

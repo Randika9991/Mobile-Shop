@@ -8,25 +8,114 @@ import UserNavBar from "../../../layout/user/UserNavBar";
 const ProductShow = () => {
     const { id } = useParams();
     const token = localStorage.getItem("authToken");
+    const authId = localStorage.getItem("authId");
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [quantity, setQuantity] = useState(1);
+    const [favorite, setFavorite] = useState();
+    const [addToCartGet, setAddToCart] = useState();
+
+    let productId = id;
 
     useEffect(() => {
-        const fetchProduct = async () => {
-            try {
-                const response = await axios.get(`http://localhost:3000/api/itemFindByIdUser/${id}`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-                setProduct(response.data);
-                setLoading(false);
-            } catch (error) {
-                console.error("Error fetching product details:", error);
-                setLoading(false);
-            }
-        };
         fetchProduct();
-    }, [id]);
+        getFavoriteItemFindId();
+        getToCartItemFindId();
+    }, [token,id]);
+
+    const fetchProduct = async () => {
+        try {
+            const response = await axios.get(`http://localhost:3000/api/itemFindByIdUser/${id}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            setProduct(response.data);
+            setLoading(false);
+        } catch (error) {
+            console.error("Error fetching product details:", error);
+            setLoading(false);
+        }
+    };
+
+    //getFavoriteItemFindId true or false
+    const getFavoriteItemFindId = async () => {
+        try {
+            const response = await axios.get(`http://localhost:3000/api/getFavoriteItemFindId/${authId}`, {
+                params: { productId:id },
+                headers:{
+                    Authorization: `Bearer ${token}`
+                },
+            });
+            setFavorite(response.data)
+
+        } catch (error) {
+            console.error("Error fetching product details:", error);
+            setLoading(false);
+        }
+    };
+
+    const getToCartItemFindId = async () => {
+        try {
+            const response = await axios.get(`http://localhost:3000/api/getAddToCartItemFindId/${authId}`, {
+                params: { productId:id },
+                headers:{
+                    Authorization: `Bearer ${token}`
+                },
+            });
+
+            setAddToCart(response.data)
+
+        } catch (error) {
+            console.error("Error fetching product details:", error);
+            setLoading(false);
+        }
+    };
+
+    const handleFavoriteToggle = async () => {
+        try {
+            if (favorite) {
+                await axios.delete(`http://localhost:3000/api/DeleteFavoriteFindProductId/${productId}`, {
+                    data: { authId },
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+            } else {
+                 const response = await axios.post(`http://localhost:3000/api/addFavorite`, {
+                    userId: authId,
+                    itemId: id
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    },
+                });
+
+            }
+            setFavorite((prev) => !prev);
+        } catch (error) {
+            console.error("Error updating favorite status:", error);
+        }
+    };
+
+    const addToCartToggle = async () => {
+        try {
+            if (addToCartGet) {
+                const response = await axios.delete(`http://localhost:3000/api/DeleteAddToCart/${productId}`, {
+                    data: { authId },
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+            } else {
+                const response = await axios.post(`http://localhost:3000/api/addAddToCart`, {
+                    userId: authId,
+                    itemId: id
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    },
+                });
+            }
+            setAddToCart((prev) => !prev);
+        } catch (error) {
+            console.error("Error updating favorite status:", error);
+        }
+    };
 
     if (loading) {
         return (
@@ -47,7 +136,7 @@ const ProductShow = () => {
     return (
         <div className="bg-gray-100 min-h-screen flex flex-col">
             <UserNavBar />
-            <div className="  p-12  ">
+            <div className="p-12">
                 <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col md:flex-row gap-6 flex items-center
                 ">
                     {/* Product Image with Zoom Effect */}
@@ -61,15 +150,15 @@ const ProductShow = () => {
 
                     {/* Product Details */}
                     <div className="relative flex flex-col justify-between left-16">
+                        <h1 className="text-3xl font-bold text-gray-800">{product.name}</h1>
                         <div className="relative group  bg-gray-100 p-6 mt-3  rounded-lg shadow-inner">
-                            <h1 className="text-3xl font-bold text-gray-800">{product.name}</h1>
+
                             <p className="text-gray-600 mt-2">Model: {product.modelNumber}</p>
                             <p className="text-gray-600 mt-2">Color: {product.color}</p>
                             <p className="text-gray-600 mt-2">Storage: {product.rom} GB / RAM: {product.ram} GB</p>
-                            <p className="text-xl font-semibold text-green-600 mt-4">${product.price}</p>
+                            <p className="text-xl font-semibold text-green-600 mt-4">Price: ${product.price}</p>
                             <p className="text-gray-700 mt-4">{product.description}</p>
 
-                            {/* Star Rating */}
                             <div className="flex items-center mt-3">
                                 {Array.from({ length: 5 }, (_, index) => (
                                     <FaStar
@@ -83,37 +172,34 @@ const ProductShow = () => {
 
                         {/* Quantity Selector */}
                         <div className="mt-4">
-                            <label className="text-gray-700 font-medium">Quantity:</label>
-                            <div className="flex items-center space-x-2 mt-2">
-                                <button
-                                    className="px-3 py-1 bg-gray-300 rounded-md hover:bg-gray-400"
-                                    onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
-                                >
-                                    -
-                                </button>
-                                <span className="text-lg font-semibold">{quantity}</span>
-                                <button
-                                    className="px-3 py-1 bg-gray-300 rounded-md hover:bg-gray-400"
-                                    onClick={() => setQuantity((prev) => prev + 1)}
-                                >
-                                    +
-                                </button>
-                            </div>
+                            <label className="text-gray-700 font-medium text-lg font-semibold">Available Quantity: {product.qty}</label>
                         </div>
 
                         {/* Action Buttons */}
                         <div className="mt-6 flex space-x-4">
-                            <button className="px-6 py-2 flex items-center bg-blue-600 text-white rounded-lg hover:bg-blue-800 transition">
-                                <FaShoppingCart className="mr-2" /> Add to Cart
+                            <button
+                                className={`px-6 py-2 flex items-center rounded-lg transition ${
+                                    addToCartGet ? "bg-green-600 text-white hover:bg-green-800" : "bg-gray-300 text-black hover:bg-gray-400"
+                                }`}
+                                onClick={addToCartToggle}
+                            >
+                                <FaShoppingCart className="mr-2" /> {addToCartGet ? "Remove from Cart" : "Add to Cart"}
                             </button>
-                            <button className="px-6 py-2 flex items-center bg-red-600 text-white rounded-lg hover:bg-red-800 transition">
-                                <FaHeart className="mr-2" /> Add to Wishlist
+
+                            <button
+                                className={`px-6 py-2 flex items-center rounded-lg transition ${
+                                    favorite ? "bg-red-600 text-white hover:bg-red-800" : "bg-gray-300 text-black hover:bg-gray-400"
+                                }`}
+                                onClick={handleFavoriteToggle}
+                            >
+                                <FaHeart className="mr-2" /> {favorite ? "Remove from Wishlist" : "Add to Wishlist"}
                             </button>
+
                         </div>
 
                         {/* Back to Products */}
                         <div className="mt-6">
-                            <Link to="/products" className="text-blue-600 hover:underline">
+                            <Link to="/user/item/index" className="text-blue-600 hover:underline">
                                 ← Back to Products
                             </Link>
                         </div>
@@ -126,3 +212,4 @@ const ProductShow = () => {
 };
 
 export default ProductShow;
+
